@@ -25,6 +25,7 @@ function logout() {
       <router-link class="nav-link" to="/admin/treks">Treks</router-link>
       <router-link class="nav-link" to="/admin/staff">Staff</router-link>
       <router-link class="nav-link" to="/admin/users">Users</router-link>
+      <router-link class="nav-link" to="/admin/bookings">Bookings</router-link>
     </div>
     <button class="btn btn-outline-light btn-sm" @click="logout">Logout</button>
   </nav>

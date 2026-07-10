@@ -15,6 +15,7 @@ function logout() {
     <span class="navbar-brand">{{ auth.name }}</span>
     <div class="navbar-nav me-auto">
       <router-link class="nav-link" to="/user">Treks</router-link>
+      <router-link class="nav-link" to="/user/history">History</router-link>
       <router-link class="nav-link" to="/user/profile">Profile</router-link>
     </div>
     <button class="btn btn-outline-light btn-sm" @click="logout">Logout</button>
