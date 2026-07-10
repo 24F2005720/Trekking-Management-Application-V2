@@ -7,6 +7,7 @@ import AdminTreks from "./views/admin/Treks.vue";
 import AdminStaff from "./views/admin/Staff.vue";
 import AdminUsers from "./views/admin/Users.vue";
 import StaffDashboard from "./views/staff/Dashboard.vue";
+import StaffTrekManage from "./views/staff/TrekManage.vue";
 import UserDashboard from "./views/user/Dashboard.vue";
 
 const routes = [
@@ -23,7 +24,12 @@ const routes = [
       { path: "users", component: AdminUsers },
     ],
   },
-  { path: "/staff", component: StaffDashboard, meta: { role: "staff" } },
+  {
+    path: "/staff",
+    component: StaffDashboard,
+    meta: { role: "staff" },
+    children: [{ path: "treks/:id", component: StaffTrekManage }],
+  },
   { path: "/user", component: UserDashboard, meta: { role: "trekker" } },
 ];
 
