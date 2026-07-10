@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 
+from cache import cache_invalidate
 from decorators import role_required
 from extensions import db
 from model.trek import Trek
@@ -56,6 +57,7 @@ def create_trek():
     )
     db.session.add(trek)
     db.session.commit()
+    cache_invalidate("treks:")
     return jsonify(trek_dict(trek)), 201
 
 
@@ -68,6 +70,7 @@ def update_trek(trek_id):
         if field in data:
             setattr(trek, field, data[field])
     db.session.commit()
+    cache_invalidate("treks:")
     return jsonify(trek_dict(trek))
 
 
@@ -77,6 +80,7 @@ def delete_trek(trek_id):
     trek = Trek.query.get_or_404(trek_id)
     db.session.delete(trek)
     db.session.commit()
+    cache_invalidate("treks:")
     return jsonify({"message": "deleted"})
 
 
@@ -90,6 +94,7 @@ def assign_staff(trek_id):
         return jsonify({"error": "staff not found"}), 404
     trek.staff_id = staff.id
     db.session.commit()
+    cache_invalidate("treks:")
     return jsonify(trek_dict(trek))
 
 

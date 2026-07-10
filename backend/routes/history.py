@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import get_jwt, get_jwt_identity
 
+from cache import cache_invalidate
 from decorators import role_required
 from extensions import db
 from model.booking import Booking
@@ -40,4 +41,5 @@ def cancel_booking(booking_id):
     booking.status = "Cancelled"
     booking.trek.slots += 1
     db.session.commit()
+    cache_invalidate("treks:")
     return jsonify(booking_dict(booking))

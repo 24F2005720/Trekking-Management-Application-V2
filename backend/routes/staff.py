@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity
 
+from cache import cache_invalidate
 from decorators import role_required
 from extensions import db
 from model.booking import Booking
@@ -42,6 +43,7 @@ def update_trek(trek_id):
         if field in data:
             setattr(trek, field, data[field])
     db.session.commit()
+    cache_invalidate("treks:")
     return jsonify(trek_dict(trek))
 
 
@@ -58,6 +60,7 @@ def set_status(trek_id):
 
     trek.status = status
     db.session.commit()
+    cache_invalidate("treks:")
     return jsonify(trek_dict(trek))
 
 

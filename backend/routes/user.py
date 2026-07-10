@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity
 
+from cache import cache_get, cache_invalidate, cache_set
 from decorators import role_required
 from extensions import db
 from model.booking import Booking
@@ -26,6 +27,11 @@ def trek_dict(t):
 @user_bp.get("/treks")
 @role_required("trekker")
 def list_open_treks():
+    cache_key = f"treks:{request.query_string.decode()}"
+    cached = cache_get(cache_key)
+    if cached is not None:
+        return jsonify(cached)
+
     query = Trek.query.filter_by(status="Open")
     if difficulty := request.args.get("difficulty"):
         query = query.filter_by(difficulty=difficulty)
@@ -33,7 +39,10 @@ def list_open_treks():
         query = query.filter(Trek.location.ilike(f"%{location}%"))
     if duration := request.args.get("duration"):
         query = query.filter_by(duration_days=duration)
-    return jsonify([trek_dict(t) for t in query.all()])
+
+    result = [trek_dict(t) for t in query.all()]
+    cache_set(cache_key, result)
+    return jsonify(result)
 
 
 @user_bp.post("/treks/<int:trek_id>/book")
@@ -50,6 +59,7 @@ def book_trek(trek_id):
     trek.slots -= 1
     db.session.add(Booking(user_id=user_id, trek_id=trek_id))
     db.session.commit()
+    cache_invalidate("treks:")
     return jsonify({"message": "booked"}), 201
 
 
