@@ -1,0 +1,45 @@
+<script setup>
+import { onMounted, ref } from "vue";
+import { apiFetch } from "../../api";
+
+const users = ref([]);
+
+async function load() {
+  users.value = await apiFetch("/api/admin/users");
+}
+onMounted(load);
+
+async function toggle(user) {
+  await apiFetch(`/api/admin/users/${user.id}/toggle-active`, { method: "PATCH" });
+  await load();
+}
+</script>
+
+<template>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="u in users" :key="u.id">
+        <td>{{ u.name }}</td>
+        <td>{{ u.email }}</td>
+        <td>
+          <span :class="u.is_active ? 'badge bg-success' : 'badge bg-danger'">
+            {{ u.is_active ? "Active" : "Blacklisted" }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm" :class="u.is_active ? 'btn-danger' : 'btn-success'" @click="toggle(u)">
+            {{ u.is_active ? "Blacklist" : "Reinstate" }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>

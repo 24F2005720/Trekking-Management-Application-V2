@@ -17,7 +17,9 @@ def create_app():
     from model import booking, staff_profile, trek, user  # noqa: F401  registers tables
 
     from routes.auth import auth_bp
+    from routes.admin import admin_bp
     app.register_blueprint(auth_bp)
+    app.register_blueprint(admin_bp)
 
     @app.route("/")
     def home():
