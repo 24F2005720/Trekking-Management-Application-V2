@@ -9,6 +9,8 @@ import AdminUsers from "./views/admin/Users.vue";
 import StaffDashboard from "./views/staff/Dashboard.vue";
 import StaffTrekManage from "./views/staff/TrekManage.vue";
 import UserDashboard from "./views/user/Dashboard.vue";
+import UserTrekList from "./views/user/TrekList.vue";
+import UserProfile from "./views/user/Profile.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
@@ -30,7 +32,15 @@ const routes = [
     meta: { role: "staff" },
     children: [{ path: "treks/:id", component: StaffTrekManage }],
   },
-  { path: "/user", component: UserDashboard, meta: { role: "trekker" } },
+  {
+    path: "/user",
+    component: UserDashboard,
+    meta: { role: "trekker" },
+    children: [
+      { path: "", component: UserTrekList },
+      { path: "profile", component: UserProfile },
+    ],
+  },
 ];
 
 const router = createRouter({
