@@ -1,0 +1,14 @@
+# backend (Python/Flask)
+.venv/
+__pycache__/
+*.pyc
+instance/
+*.db
+
+# frontend (Node/Vite)
+node_modules/
+dist/
+
+# editors/OS
+.DS_Store
+.vscode/
