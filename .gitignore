@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 instance/
 *.db
+exports/
 
 # frontend (Node/Vite)
 node_modules/

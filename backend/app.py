@@ -21,11 +21,13 @@ def create_app():
     from routes.staff import staff_bp
     from routes.user import user_bp
     from routes.history import history_bp
+    from routes.export import export_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(staff_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(history_bp)
+    app.register_blueprint(export_bp)
 
     @app.route("/")
     def home():
