@@ -5,6 +5,7 @@ import { apiFetch } from "../../api";
 const staff = ref([]);
 const showModal = ref(false);
 const error = ref("");
+const validated = ref(false);
 const form = ref({ name: "", email: "", password: "" });
 
 async function load() {
@@ -15,7 +16,14 @@ onMounted(load);
 function openCreate() {
   form.value = { name: "", email: "", password: "" };
   error.value = "";
+  validated.value = false;
   showModal.value = true;
+}
+
+async function onSubmit(e) {
+  validated.value = true;
+  if (!e.target.checkValidity()) return;
+  await save();
 }
 
 async function save() {
@@ -53,10 +61,19 @@ async function save() {
     <div class="modal-dialog">
       <div class="modal-content p-3">
         <h5>New Staff</h5>
-        <form @submit.prevent="save">
-          <input class="form-control mb-2" v-model="form.name" placeholder="Name" required />
-          <input class="form-control mb-2" type="email" v-model="form.email" placeholder="Email" required />
-          <input class="form-control mb-2" type="password" v-model="form.password" placeholder="Password" minlength="6" required />
+        <form novalidate :class="{ 'was-validated': validated }" @submit.prevent="onSubmit">
+          <div class="mb-2">
+            <input class="form-control" v-model="form.name" placeholder="Name" required />
+            <div class="invalid-feedback">Name is required.</div>
+          </div>
+          <div class="mb-2">
+            <input class="form-control" type="email" v-model="form.email" placeholder="Email" required />
+            <div class="invalid-feedback">Enter a valid email.</div>
+          </div>
+          <div class="mb-2">
+            <input class="form-control" type="password" v-model="form.password" placeholder="Password" minlength="6" required />
+            <div class="invalid-feedback">Password must be at least 6 characters.</div>
+          </div>
           <p v-if="error" class="text-danger">{{ error }}</p>
           <div class="d-flex justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" @click="showModal = false">Cancel</button>

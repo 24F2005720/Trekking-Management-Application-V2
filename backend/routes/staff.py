@@ -55,8 +55,9 @@ def set_status(trek_id):
         return jsonify({"error": "Forbidden"}), 403
 
     status = (request.get_json() or {}).get("status")
-    if status not in ("Started", "Completed"):
-        return jsonify({"error": "status must be Started or Completed"}), 400
+    valid_transitions = {"Open": ("Started", "Closed"), "Started": ("Completed", "Closed")}
+    if status not in valid_transitions.get(trek.status, ()):
+        return jsonify({"error": f"cannot move from {trek.status} to {status}"}), 400
 
     trek.status = status
     db.session.commit()

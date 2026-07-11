@@ -31,6 +31,11 @@ async function setStatus(status) {
   await apiFetch(`/api/staff/treks/${trekId}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
   await load();
 }
+
+async function cancelTrek() {
+  if (!confirm(`Cancel trek "${trek.value.name}"? This cannot be undone.`)) return;
+  await setStatus("Closed");
+}
 </script>
 
 <template>
@@ -51,8 +56,15 @@ async function setStatus(status) {
       <button class="btn btn-sm btn-warning me-2" :disabled="trek.status !== 'Open'" @click="setStatus('Started')">
         Mark Started
       </button>
-      <button class="btn btn-sm btn-success" :disabled="trek.status !== 'Started'" @click="setStatus('Completed')">
+      <button class="btn btn-sm btn-success me-2" :disabled="trek.status !== 'Started'" @click="setStatus('Completed')">
         Mark Completed
+      </button>
+      <button
+        class="btn btn-sm btn-outline-danger"
+        :disabled="!['Open', 'Started'].includes(trek.status)"
+        @click="cancelTrek"
+      >
+        Cancel Trek
       </button>
     </div>
 

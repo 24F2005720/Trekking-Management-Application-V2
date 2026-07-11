@@ -1,8 +1,11 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { apiFetch } from "../../api";
+import { auth } from "../../stores/auth";
 
 const bookings = ref([]);
+const exporting = ref(false);
+const exportError = ref("");
 
 async function load() {
   bookings.value = await apiFetch("/api/history/bookings");
@@ -14,9 +17,47 @@ async function cancel(b) {
   await apiFetch(`/api/history/bookings/${b.id}/cancel`, { method: "POST" });
   await load();
 }
+
+async function exportCsv() {
+  exporting.value = true;
+  exportError.value = "";
+  try {
+    const { task_id } = await apiFetch("/api/export/booking-history", { method: "POST" });
+
+    let status = "PENDING";
+    while (status !== "SUCCESS") {
+      await new Promise((r) => setTimeout(r, 800));
+      ({ status } = await apiFetch(`/api/export/booking-history/${task_id}`));
+      if (status === "FAILURE") throw new Error("export failed");
+    }
+
+    const res = await fetch(`/api/export/booking-history/${task_id}/download`, {
+      headers: { Authorization: `Bearer ${auth.token}` },
+    });
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "booking_history.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    exportError.value = e.message;
+  } finally {
+    exporting.value = false;
+  }
+}
 </script>
 
 <template>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Booking History</h1>
+    <button class="btn btn-outline-secondary btn-sm" :disabled="exporting" @click="exportCsv">
+      {{ exporting ? "Exporting..." : "Export CSV" }}
+    </button>
+  </div>
+  <p v-if="exportError" class="text-danger">{{ exportError }}</p>
+
   <table class="table table-bordered">
     <thead>
       <tr>

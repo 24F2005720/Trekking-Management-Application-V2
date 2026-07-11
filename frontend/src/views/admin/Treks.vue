@@ -8,6 +8,7 @@ const editing = ref(null);
 const showModal = ref(false);
 const staffList = ref([]);
 const error = ref("");
+const validated = ref(false);
 
 const empty = () => ({ name: "", location: "", difficulty: "Easy", duration_days: 1, price: 0, slots: 1 });
 const form = ref(empty());
@@ -25,6 +26,7 @@ function openCreate() {
   editing.value = null;
   form.value = empty();
   error.value = "";
+  validated.value = false;
   showModal.value = true;
 }
 
@@ -32,7 +34,14 @@ function openEdit(trek) {
   editing.value = trek;
   form.value = { ...trek };
   error.value = "";
+  validated.value = false;
   showModal.value = true;
+}
+
+async function onSubmit(e) {
+  validated.value = true;
+  if (!e.target.checkValidity()) return;
+  await save();
 }
 
 async function save() {
@@ -109,17 +118,32 @@ async function assign(trek, event) {
     <div class="modal-dialog">
       <div class="modal-content p-3">
         <h5>{{ editing ? "Edit Trek" : "New Trek" }}</h5>
-        <form @submit.prevent="save">
-          <input class="form-control mb-2" v-model="form.name" placeholder="Name" required />
-          <input class="form-control mb-2" v-model="form.location" placeholder="Location" required />
+        <form novalidate :class="{ 'was-validated': validated }" @submit.prevent="onSubmit">
+          <div class="mb-2">
+            <input class="form-control" v-model="form.name" placeholder="Name" required />
+            <div class="invalid-feedback">Name is required.</div>
+          </div>
+          <div class="mb-2">
+            <input class="form-control" v-model="form.location" placeholder="Location" required />
+            <div class="invalid-feedback">Location is required.</div>
+          </div>
           <select class="form-select mb-2" v-model="form.difficulty">
             <option>Easy</option>
             <option>Moderate</option>
             <option>Hard</option>
           </select>
-          <input class="form-control mb-2" type="number" min="1" v-model.number="form.duration_days" placeholder="Duration (days)" required />
-          <input class="form-control mb-2" type="number" min="0" step="0.01" v-model.number="form.price" placeholder="Price" required />
-          <input class="form-control mb-2" type="number" min="0" v-model.number="form.slots" placeholder="Slots" required />
+          <div class="mb-2">
+            <input class="form-control" type="number" min="1" v-model.number="form.duration_days" placeholder="Duration (days)" required />
+            <div class="invalid-feedback">Duration must be at least 1 day.</div>
+          </div>
+          <div class="mb-2">
+            <input class="form-control" type="number" min="0" step="0.01" v-model.number="form.price" placeholder="Price" required />
+            <div class="invalid-feedback">Price cannot be negative.</div>
+          </div>
+          <div class="mb-2">
+            <input class="form-control" type="number" min="0" v-model.number="form.slots" placeholder="Slots" required />
+            <div class="invalid-feedback">Slots cannot be negative.</div>
+          </div>
           <p v-if="error" class="text-danger">{{ error }}</p>
           <div class="d-flex justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" @click="showModal = false">Cancel</button>

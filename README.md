@@ -124,24 +124,6 @@ Celery and Redis are used to execute asynchronous tasks, including:
 
 ---
 
-## Project Status
-
-**Current Milestone:** Milestone 0 – Repository Setup
-
-Upcoming milestones include:
-
-- Database Models & Schema
-- Authentication & Role-Based Access
-- Admin Dashboard
-- Trek Staff Dashboard
-- User Dashboard
-- Booking Management
-- Celery Background Jobs
-- Redis Caching
-- UI Enhancements
-- Reports & Analytics
----
-
 ## Course Information
 
 **Course:** Modern Application Development II (MAD-II)

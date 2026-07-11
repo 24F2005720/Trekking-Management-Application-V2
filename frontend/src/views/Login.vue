@@ -7,7 +7,14 @@ import { setAuth } from "../stores/auth";
 const email = ref("");
 const password = ref("");
 const error = ref("");
+const validated = ref(false);
 const router = useRouter();
+
+async function onSubmit(e) {
+  validated.value = true;
+  if (!e.target.checkValidity()) return;
+  await submit();
+}
 
 async function submit() {
   error.value = "";
@@ -28,10 +35,16 @@ async function submit() {
 
 <template>
   <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-    <form class="card p-4 shadow-sm" style="width: 22rem" @submit.prevent="submit">
+    <form novalidate :class="{ 'was-validated': validated }" class="card p-4 shadow-sm" style="width: 22rem" @submit.prevent="onSubmit">
       <h1 class="h4 mb-3 text-center">Login</h1>
-      <input class="form-control mb-2" v-model="email" type="email" placeholder="Email" required />
-      <input class="form-control mb-2" v-model="password" type="password" placeholder="Password" required />
+      <div class="mb-2">
+        <input class="form-control" v-model="email" type="email" placeholder="Email" required />
+        <div class="invalid-feedback">Enter a valid email.</div>
+      </div>
+      <div class="mb-2">
+        <input class="form-control" v-model="password" type="password" placeholder="Password" required />
+        <div class="invalid-feedback">Password is required.</div>
+      </div>
       <button class="btn btn-primary w-100" type="submit">Login</button>
       <p v-if="error" class="text-danger mt-2 mb-0">{{ error }}</p>
       <router-link class="d-block text-center mt-3" to="/register">Need an account? Register</router-link>
