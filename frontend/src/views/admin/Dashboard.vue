@@ -1,15 +1,41 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { nextTick, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { apiFetch } from "../../api";
 import { auth, clearAuth } from "../../stores/auth";
 
 const stats = ref(null);
+const chartCanvas = ref(null);
+const route = useRoute();
 const router = useRouter();
+let chart = null;
 
-onMounted(async () => {
+async function loadStats() {
   stats.value = await apiFetch("/api/admin/stats");
-});
+  await nextTick();
+  renderChart();
+}
+
+function renderChart() {
+  if (!chartCanvas.value || !stats.value) return;
+  chart?.destroy();
+  chart = new Chart(chartCanvas.value, {
+    type: "bar",
+    data: {
+      labels: Object.keys(stats.value),
+      datasets: [{ label: "Count", data: Object.values(stats.value), backgroundColor: "#0d6efd" }],
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } },
+  });
+}
+
+onMounted(loadStats);
+watch(
+  () => route.path,
+  (path) => {
+    if (path === "/admin") nextTick(renderChart);
+  }
+);
 
 function logout() {
   clearAuth();
@@ -31,12 +57,17 @@ function logout() {
   </nav>
 
   <div class="container my-4">
-    <div v-if="$route.path === '/admin'" class="row g-3">
-      <div class="col-3" v-for="(value, key) in stats" :key="key">
-        <div class="card text-center p-3">
-          <div class="fs-3">{{ value }}</div>
-          <div class="text-muted text-capitalize">{{ key }}</div>
+    <div v-if="route.path === '/admin'">
+      <div class="row g-3 mb-4">
+        <div class="col-3" v-for="(value, key) in stats" :key="key">
+          <div class="card text-center p-3">
+            <div class="fs-3">{{ value }}</div>
+            <div class="text-muted text-capitalize">{{ key }}</div>
+          </div>
         </div>
+      </div>
+      <div class="card p-3">
+        <canvas ref="chartCanvas" height="90"></canvas>
       </div>
     </div>
     <router-view v-else />
