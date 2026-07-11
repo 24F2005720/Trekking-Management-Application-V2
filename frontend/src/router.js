@@ -47,6 +47,8 @@ const routes = [
   },
 ];
 
+export const roleHome = { admin: "/admin", staff: "/staff", trekker: "/user" };
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -54,7 +56,7 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   if (to.meta.role && !auth.token) return "/login";
-  if (to.meta.role && auth.role !== to.meta.role) return `/${auth.role}`;
+  if (to.meta.role && auth.role !== to.meta.role) return roleHome[auth.role];
 });
 
 export default router;

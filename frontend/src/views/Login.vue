@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { roleHome } from "../router.js";
 import { setAuth } from "../stores/auth";
 
 const email = ref("");
@@ -21,7 +22,7 @@ async function submit() {
     return;
   }
   setAuth(data);
-  router.push(`/${data.role}`);
+  router.push(roleHome[data.role]);
 }
 </script>
 
