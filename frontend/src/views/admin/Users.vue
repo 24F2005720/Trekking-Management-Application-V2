@@ -3,9 +3,10 @@ import { onMounted, ref } from "vue";
 import { apiFetch } from "../../api";
 
 const users = ref([]);
+const q = ref("");
 
 async function load() {
-  users.value = await apiFetch("/api/admin/users");
+  users.value = await apiFetch(`/api/admin/users${q.value ? `?q=${encodeURIComponent(q.value)}` : ""}`);
 }
 onMounted(load);
 
@@ -16,6 +17,8 @@ async function toggle(user) {
 </script>
 
 <template>
+  <input v-model="q" @keyup.enter="load" class="form-control w-auto mb-3" placeholder="Search by name/email" />
+
   <table class="table table-bordered">
     <thead>
       <tr>

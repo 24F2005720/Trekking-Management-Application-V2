@@ -3,13 +3,14 @@ import { onMounted, ref } from "vue";
 import { apiFetch } from "../../api";
 
 const staff = ref([]);
+const q = ref("");
 const showModal = ref(false);
 const error = ref("");
 const validated = ref(false);
 const form = ref({ name: "", email: "", password: "" });
 
 async function load() {
-  staff.value = await apiFetch("/api/admin/staff");
+  staff.value = await apiFetch(`/api/admin/staff${q.value ? `?q=${encodeURIComponent(q.value)}` : ""}`);
 }
 onMounted(load);
 
@@ -38,7 +39,8 @@ async function save() {
 </script>
 
 <template>
-  <div class="d-flex justify-content-end mb-3">
+  <div class="d-flex justify-content-between mb-3">
+    <input v-model="q" @keyup.enter="load" class="form-control w-auto" placeholder="Search by name/email" />
     <button class="btn btn-primary" @click="openCreate">+ New Staff</button>
   </div>
 

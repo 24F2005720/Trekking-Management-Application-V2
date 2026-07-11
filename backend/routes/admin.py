@@ -101,7 +101,11 @@ def assign_staff(trek_id):
 @admin_bp.get("/staff")
 @role_required("admin")
 def list_staff():
-    return jsonify([user_dict(u) for u in User.query.filter_by(role="staff").all()])
+    query = User.query.filter_by(role="staff")
+    if q := request.args.get("q"):
+        like = f"%{q}%"
+        query = query.filter(db.or_(User.name.ilike(like), User.email.ilike(like)))
+    return jsonify([user_dict(u) for u in query.all()])
 
 
 @admin_bp.post("/staff")
@@ -124,7 +128,11 @@ def create_staff():
 @admin_bp.get("/users")
 @role_required("admin")
 def list_users():
-    return jsonify([user_dict(u) for u in User.query.filter_by(role="trekker").all()])
+    query = User.query.filter_by(role="trekker")
+    if q := request.args.get("q"):
+        like = f"%{q}%"
+        query = query.filter(db.or_(User.name.ilike(like), User.email.ilike(like)))
+    return jsonify([user_dict(u) for u in query.all()])
 
 
 @admin_bp.patch("/users/<int:user_id>/toggle-active")

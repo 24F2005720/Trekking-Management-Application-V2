@@ -31,7 +31,9 @@ def send_email(to, subject, body):
     msg["To"] = to
     msg["Subject"] = subject
     msg.set_content(body, subtype="html")
-    with smtplib.SMTP(server, current_app.config.get("MAIL_PORT", 25)) as smtp:
+    with smtplib.SMTP(server, current_app.config["MAIL_PORT"]) as smtp:
+        smtp.starttls()
+        smtp.login(current_app.config["MAIL_USERNAME"], current_app.config["MAIL_PASSWORD"])
         smtp.send_message(msg)
 
 
