@@ -117,9 +117,9 @@ async function assign(trek, event) {
             <option>Moderate</option>
             <option>Hard</option>
           </select>
-          <input class="form-control mb-2" type="number" v-model.number="form.duration_days" placeholder="Duration (days)" required />
-          <input class="form-control mb-2" type="number" v-model.number="form.price" placeholder="Price" required />
-          <input class="form-control mb-2" type="number" v-model.number="form.slots" placeholder="Slots" required />
+          <input class="form-control mb-2" type="number" min="1" v-model.number="form.duration_days" placeholder="Duration (days)" required />
+          <input class="form-control mb-2" type="number" min="0" step="0.01" v-model.number="form.price" placeholder="Price" required />
+          <input class="form-control mb-2" type="number" min="0" v-model.number="form.slots" placeholder="Slots" required />
           <p v-if="error" class="text-danger">{{ error }}</p>
           <div class="d-flex justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" @click="showModal = false">Cancel</button>

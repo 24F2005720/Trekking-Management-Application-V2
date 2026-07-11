@@ -26,12 +26,14 @@ async function submit() {
 </script>
 
 <template>
-  <form @submit.prevent="submit">
-    <h1>Login</h1>
-    <input v-model="email" type="email" placeholder="Email" required />
-    <input v-model="password" type="password" placeholder="Password" required />
-    <button type="submit">Login</button>
-    <p v-if="error">{{ error }}</p>
-    <router-link to="/register">Need an account? Register</router-link>
-  </form>
+  <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <form class="card p-4 shadow-sm" style="width: 22rem" @submit.prevent="submit">
+      <h1 class="h4 mb-3 text-center">Login</h1>
+      <input class="form-control mb-2" v-model="email" type="email" placeholder="Email" required />
+      <input class="form-control mb-2" v-model="password" type="password" placeholder="Password" required />
+      <button class="btn btn-primary w-100" type="submit">Login</button>
+      <p v-if="error" class="text-danger mt-2 mb-0">{{ error }}</p>
+      <router-link class="d-block text-center mt-3" to="/register">Need an account? Register</router-link>
+    </form>
+  </div>
 </template>

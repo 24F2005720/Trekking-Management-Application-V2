@@ -42,7 +42,7 @@ async function setStatus(status) {
 
     <div class="d-flex align-items-center gap-2 mb-3">
       <label>Slots:</label>
-      <input type="number" class="form-control w-auto" v-model.number="trek.slots" />
+      <input type="number" class="form-control w-auto" min="0" required v-model.number="trek.slots" />
       <button class="btn btn-sm btn-secondary" @click="saveSlots">Save</button>
     </div>
     <p v-if="error" class="text-danger">{{ error }}</p>
