@@ -6,6 +6,7 @@ import { auth } from "../../stores/auth";
 const bookings = ref([]);
 const exporting = ref(false);
 const exportError = ref("");
+const exportDone = ref(false);
 
 async function load() {
   bookings.value = await apiFetch("/api/history/bookings");
@@ -21,6 +22,7 @@ async function cancel(b) {
 async function exportCsv() {
   exporting.value = true;
   exportError.value = "";
+  exportDone.value = false;
   try {
     const { task_id } = await apiFetch("/api/export/booking-history", { method: "POST" });
 
@@ -41,6 +43,7 @@ async function exportCsv() {
     a.download = "booking_history.csv";
     a.click();
     URL.revokeObjectURL(url);
+    exportDone.value = true;
   } catch (e) {
     exportError.value = e.message;
   } finally {
@@ -55,6 +58,10 @@ async function exportCsv() {
     <button class="btn btn-outline-secondary btn-sm" :disabled="exporting" @click="exportCsv">
       {{ exporting ? "Exporting..." : "Export CSV" }}
     </button>
+  </div>
+  <div v-if="exportDone" class="alert alert-success alert-dismissible" role="alert">
+    Export complete — your booking history CSV has downloaded.
+    <button type="button" class="btn-close" @click="exportDone = false"></button>
   </div>
   <p v-if="exportError" class="text-danger">{{ exportError }}</p>
 
