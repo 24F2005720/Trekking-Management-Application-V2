@@ -33,6 +33,7 @@ function logout() {
           <th>Name</th>
           <th>Location</th>
           <th>Slots</th>
+          <th>Registered</th>
           <th>Status</th>
           <th></th>
         </tr>
@@ -42,13 +43,14 @@ function logout() {
           <td>{{ t.name }}</td>
           <td>{{ t.location }}</td>
           <td>{{ t.slots }}</td>
+          <td>{{ t.participant_count }}</td>
           <td>{{ t.status }}</td>
           <td>
             <router-link class="btn btn-sm btn-primary" :to="`/staff/treks/${t.id}`">Manage</router-link>
           </td>
         </tr>
         <tr v-if="!treks.length">
-          <td colspan="5" class="text-center text-muted">No treks assigned yet.</td>
+          <td colspan="6" class="text-center text-muted">No treks assigned yet.</td>
         </tr>
       </tbody>
     </table>

@@ -12,11 +12,20 @@ from model.user import User
 REPORT_TEMPLATE = """
 <h1>Monthly Trekking Report</h1>
 <ul>
+  <li>Treks conducted (Completed): {{ treks_conducted }}</li>
   <li>Total treks: {{ treks }}</li>
   <li>Total staff: {{ staff }}</li>
   <li>Total trekkers: {{ trekkers }}</li>
   <li>Total bookings: {{ bookings }}</li>
 </ul>
+<h2>Popular Treks (by bookings)</h2>
+<ol>
+  {% for name, count in popular_treks %}
+  <li>{{ name }} - {{ count }} booking{{ 's' if count != 1 else '' }}</li>
+  {% else %}
+  <li>No bookings yet</li>
+  {% endfor %}
+</ol>
 """
 
 
@@ -54,17 +63,30 @@ def send_daily_reminders():
 
 @celery.task(name="tasks.generate_monthly_report")
 def generate_monthly_report():
+    from sqlalchemy import func
+
     from model.trek import Trek
+
+    popular_treks = (
+        Trek.query.join(Booking)
+        .with_entities(Trek.name, func.count(Booking.id).label("count"))
+        .group_by(Trek.id)
+        .order_by(func.count(Booking.id).desc())
+        .limit(5)
+        .all()
+    )
 
     stats = {
         "treks": Trek.query.count(),
+        "treks_conducted": Trek.query.filter_by(status="Completed").count(),
         "staff": User.query.filter_by(role="staff").count(),
         "trekkers": User.query.filter_by(role="trekker").count(),
         "bookings": Booking.query.count(),
+        "popular_treks": popular_treks,
     }
     html = render_template_string(REPORT_TEMPLATE, **stats)
     send_email(current_app.config["ADMIN_EMAIL"], "Monthly Trekking Report", html)
-    return stats
+    return {k: v for k, v in stats.items() if k != "popular_treks"}
 
 
 @celery.task(name="tasks.export_booking_history_csv", bind=True)
@@ -75,8 +97,8 @@ def export_booking_history_csv(self, user_id):
     bookings = Booking.query.filter_by(user_id=user_id).order_by(Booking.booked_at.desc()).all()
     with open(path, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["trek", "location", "status", "booked_at"])
+        writer.writerow(["user_id", "trek_name", "location", "status", "booked_at"])
         for b in bookings:
-            writer.writerow([b.trek.name, b.trek.location, b.status, b.booked_at.isoformat()])
+            writer.writerow([b.user_id, b.trek.name, b.trek.location, b.status, b.booked_at.isoformat()])
 
     return path

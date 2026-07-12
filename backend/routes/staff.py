@@ -10,8 +10,8 @@ from model.trek import Trek
 staff_bp = Blueprint("staff", __name__, url_prefix="/api/staff")
 
 
-def trek_dict(t):
-    return {
+def trek_dict(t, participant_count=None):
+    d = {
         "id": t.id,
         "name": t.name,
         "location": t.location,
@@ -21,6 +21,9 @@ def trek_dict(t):
         "slots": t.slots,
         "status": t.status,
     }
+    if participant_count is not None:
+        d["participant_count"] = participant_count
+    return d
 
 
 @staff_bp.get("/treks")
@@ -28,7 +31,9 @@ def trek_dict(t):
 def list_my_treks():
     staff_id = get_jwt_identity()
     treks = Trek.query.filter_by(staff_id=staff_id).all()
-    return jsonify([trek_dict(t) for t in treks])
+    return jsonify(
+        [trek_dict(t, Booking.query.filter_by(trek_id=t.id, status="Booked").count()) for t in treks]
+    )
 
 
 @staff_bp.put("/treks/<int:trek_id>")

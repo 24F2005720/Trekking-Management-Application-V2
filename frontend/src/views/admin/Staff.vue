@@ -36,6 +36,11 @@ async function save() {
     error.value = e.message;
   }
 }
+
+async function toggle(member) {
+  await apiFetch(`/api/admin/users/${member.id}/toggle-active`, { method: "PATCH" });
+  await load();
+}
 </script>
 
 <template>
@@ -49,12 +54,24 @@ async function save() {
       <tr>
         <th>Name</th>
         <th>Email</th>
+        <th>Status</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="s in staff" :key="s.id">
         <td>{{ s.name }}</td>
         <td>{{ s.email }}</td>
+        <td>
+          <span :class="s.is_active ? 'badge bg-success' : 'badge bg-danger'">
+            {{ s.is_active ? "Active" : "Blacklisted" }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm" :class="s.is_active ? 'btn-danger' : 'btn-success'" @click="toggle(s)">
+            {{ s.is_active ? "Blacklist" : "Reinstate" }}
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>
