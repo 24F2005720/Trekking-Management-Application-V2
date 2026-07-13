@@ -45,7 +45,7 @@ function logout() {
 
 <template>
   <nav class="navbar navbar-expand navbar-dark bg-dark px-3">
-    <span class="navbar-brand">Admin - {{ auth.name }}</span>
+    <span class="navbar-brand">⛰️Trekking Admin - {{ auth.name }}</span>
     <div class="navbar-nav me-auto">
       <router-link class="nav-link" to="/admin">Overview</router-link>
       <router-link class="nav-link" to="/admin/treks">Treks</router-link>
@@ -60,9 +60,9 @@ function logout() {
     <div v-if="route.path === '/admin'">
       <div class="row g-3 mb-4">
         <div class="col-3" v-for="(value, key) in stats" :key="key">
-          <div class="card text-center p-3">
-            <div class="fs-3">{{ value }}</div>
-            <div class="text-muted text-capitalize">{{ key }}</div>
+          <div class="card stat-tile text-center p-3">
+            <div class="fs-3 fw-semibold">{{ value }}</div>
+            <div class="text-muted text-capitalize small">{{ key }}</div>
           </div>
         </div>
       </div>

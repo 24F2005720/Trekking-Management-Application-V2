@@ -12,10 +12,10 @@ function logout() {
 
 <template>
   <nav class="navbar navbar-expand navbar-dark bg-dark px-3">
-    <span class="navbar-brand">{{ auth.name }}</span>
+    <span class="navbar-brand">⛰️ Trekking - {{ auth.name }}</span>
     <div class="navbar-nav me-auto">
-      <router-link class="nav-link" to="/user">Treks</router-link>
-      <router-link class="nav-link" to="/user/history">History</router-link>
+      <router-link class="nav-link" to="/user">Explore Treks</router-link>
+      <router-link class="nav-link" to="/user/history">My History</router-link>
       <router-link class="nav-link" to="/user/profile">Profile</router-link>
     </div>
     <button class="btn btn-outline-light btn-sm" @click="logout">Logout</button>

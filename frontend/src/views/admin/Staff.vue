@@ -49,38 +49,46 @@ async function toggle(member) {
     <button class="btn btn-primary" @click="openCreate">+ New Staff</button>
   </div>
 
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Status</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="s in staff" :key="s.id">
-        <td>{{ s.name }}</td>
-        <td>{{ s.email }}</td>
-        <td>
-          <span :class="s.is_active ? 'badge bg-success' : 'badge bg-danger'">
-            {{ s.is_active ? "Active" : "Blacklisted" }}
-          </span>
-        </td>
-        <td>
-          <button class="btn btn-sm" :class="s.is_active ? 'btn-danger' : 'btn-success'" @click="toggle(s)">
-            {{ s.is_active ? "Blacklist" : "Reinstate" }}
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-wrap">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="s in staff" :key="s.id">
+          <td class="fw-medium">{{ s.name }}</td>
+          <td>{{ s.email }}</td>
+          <td>
+            <span :class="s.is_active ? 'badge bg-success' : 'badge bg-danger'">
+              {{ s.is_active ? "Active" : "Blacklisted" }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm" :class="s.is_active ? 'btn-danger' : 'btn-success'" @click="toggle(s)">
+              {{ s.is_active ? "Blacklist" : "Reinstate" }}
+            </button>
+          </td>
+        </tr>
+        <tr v-if="!staff.length">
+          <td colspan="4" class="text-center text-muted py-4">No staff yet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <div v-if="showModal" class="modal d-block" style="background: rgba(0,0,0,0.5)">
     <div class="modal-dialog">
-      <div class="modal-content p-3">
-        <h5>New Staff</h5>
-        <form novalidate :class="{ 'was-validated': validated }" @submit.prevent="onSubmit">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Staff</h5>
+          <button type="button" class="btn-close" @click="showModal = false"></button>
+        </div>
+        <form class="modal-body" novalidate :class="{ 'was-validated': validated }" @submit.prevent="onSubmit">
           <div class="mb-2">
             <input class="form-control" v-model="form.name" placeholder="Name" required />
             <div class="invalid-feedback">Name is required.</div>

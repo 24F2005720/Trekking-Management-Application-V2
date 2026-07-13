@@ -13,6 +13,8 @@ const validated = ref(false);
 const empty = () => ({ name: "", location: "", difficulty: "Easy", duration_days: 1, price: 0, slots: 1 });
 const form = ref(empty());
 
+const difficultyBadge = (d) => ({ Easy: "badge-easy", Moderate: "badge-moderate", Hard: "badge-hard" }[d] || "bg-secondary");
+
 async function load() {
   treks.value = await apiFetch(`/api/admin/treks${q.value ? `?q=${encodeURIComponent(q.value)}` : ""}`);
 }
@@ -77,48 +79,56 @@ async function assign(trek, event) {
     <button class="btn btn-primary" @click="openCreate">+ New Trek</button>
   </div>
 
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Location</th>
-        <th>Difficulty</th>
-        <th>Days</th>
-        <th>Price</th>
-        <th>Slots</th>
-        <th>Status</th>
-        <th>Staff</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="t in treks" :key="t.id">
-        <td>{{ t.name }}</td>
-        <td>{{ t.location }}</td>
-        <td>{{ t.difficulty }}</td>
-        <td>{{ t.duration_days }}</td>
-        <td>{{ t.price }}</td>
-        <td>{{ t.slots }}</td>
-        <td>{{ t.status }}</td>
-        <td>
-          <select class="form-select form-select-sm" :value="t.staff_id ?? ''" @change="assign(t, $event)">
-            <option value="">Unassigned</option>
-            <option v-for="s in staffList" :key="s.id" :value="s.id">{{ s.name }}</option>
-          </select>
-        </td>
-        <td>
-          <button class="btn btn-sm btn-secondary me-1" @click="openEdit(t)">Edit</button>
-          <button class="btn btn-sm btn-danger" @click="remove(t)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-wrap">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Difficulty</th>
+          <th>Days</th>
+          <th>Price</th>
+          <th>Slots</th>
+          <th>Status</th>
+          <th>Staff</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="t in treks" :key="t.id">
+          <td class="fw-medium">{{ t.name }}</td>
+          <td>{{ t.location }}</td>
+          <td><span class="badge" :class="difficultyBadge(t.difficulty)">{{ t.difficulty }}</span></td>
+          <td>{{ t.duration_days }}</td>
+          <td>₹{{ t.price }}</td>
+          <td>{{ t.slots }}</td>
+          <td>{{ t.status }}</td>
+          <td>
+            <select class="form-select form-select-sm" :value="t.staff_id ?? ''" @change="assign(t, $event)">
+              <option value="">Unassigned</option>
+              <option v-for="s in staffList" :key="s.id" :value="s.id">{{ s.name }}</option>
+            </select>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-secondary me-1" @click="openEdit(t)">Edit</button>
+            <button class="btn btn-sm btn-danger" @click="remove(t)">Delete</button>
+          </td>
+        </tr>
+        <tr v-if="!treks.length">
+          <td colspan="9" class="text-center text-muted py-4">No treks yet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <div v-if="showModal" class="modal d-block" style="background: rgba(0,0,0,0.5)">
     <div class="modal-dialog">
-      <div class="modal-content p-3">
-        <h5>{{ editing ? "Edit Trek" : "New Trek" }}</h5>
-        <form novalidate :class="{ 'was-validated': validated }" @submit.prevent="onSubmit">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ editing ? "Edit Trek" : "New Trek" }}</h5>
+          <button type="button" class="btn-close" @click="showModal = false"></button>
+        </div>
+        <form class="modal-body" novalidate :class="{ 'was-validated': validated }" @submit.prevent="onSubmit">
           <div class="mb-2">
             <input class="form-control" v-model="form.name" placeholder="Name" required />
             <div class="invalid-feedback">Name is required.</div>

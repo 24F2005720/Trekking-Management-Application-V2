@@ -24,20 +24,23 @@ async function save() {
 </script>
 
 <template>
-  <form class="w-50" @submit.prevent="save">
-    <div class="mb-2">
-      <label>Email</label>
-      <input class="form-control" :value="email" disabled />
-    </div>
-    <div class="mb-2">
-      <label>Name</label>
-      <input class="form-control" v-model="name" required />
-    </div>
-    <div class="mb-2">
-      <label>New Password (leave blank to keep current)</label>
-      <input class="form-control" type="password" v-model="password" minlength="6" />
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <p v-if="message" class="mt-2 text-success">{{ message }}</p>
-  </form>
+  <div class="card p-4" style="max-width: 28rem">
+    <h1 class="h5 mb-3">My Profile</h1>
+    <form @submit.prevent="save">
+      <div class="mb-3">
+        <label class="form-label small text-muted">Email</label>
+        <input class="form-control" :value="email" disabled />
+      </div>
+      <div class="mb-3">
+        <label class="form-label small text-muted">Name</label>
+        <input class="form-control" v-model="name" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label small text-muted">New Password (leave blank to keep current)</label>
+        <input class="form-control" type="password" v-model="password" minlength="6" />
+      </div>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+      <p v-if="message" class="mt-2 text-success small">{{ message }}</p>
+    </form>
+  </div>
 </template>

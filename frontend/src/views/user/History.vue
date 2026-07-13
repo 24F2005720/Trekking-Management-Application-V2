@@ -8,6 +8,8 @@ const exporting = ref(false);
 const exportError = ref("");
 const exportDone = ref(false);
 
+const statusBadge = (s) => ({ Booked: "bg-success", Cancelled: "bg-danger", Completed: "bg-secondary" }[s] || "bg-secondary");
+
 async function load() {
   bookings.value = await apiFetch("/api/history/bookings");
 }
@@ -65,29 +67,31 @@ async function exportCsv() {
   </div>
   <p v-if="exportError" class="text-danger">{{ exportError }}</p>
 
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Trek</th>
-        <th>Location</th>
-        <th>Booked At</th>
-        <th>Status</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="b in bookings" :key="b.id">
-        <td>{{ b.trek.name }}</td>
-        <td>{{ b.trek.location }}</td>
-        <td>{{ new Date(b.booked_at).toLocaleDateString() }}</td>
-        <td>{{ b.status }}</td>
-        <td>
-          <button v-if="b.status === 'Booked'" class="btn btn-sm btn-danger" @click="cancel(b)">Cancel</button>
-        </td>
-      </tr>
-      <tr v-if="!bookings.length">
-        <td colspan="5" class="text-center text-muted">No bookings yet.</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-wrap">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Trek</th>
+          <th>Location</th>
+          <th>Booked At</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="b in bookings" :key="b.id">
+          <td class="fw-medium">{{ b.trek.name }}</td>
+          <td>{{ b.trek.location }}</td>
+          <td>{{ new Date(b.booked_at).toLocaleDateString() }}</td>
+          <td><span class="badge" :class="statusBadge(b.status)">{{ b.status }}</span></td>
+          <td>
+            <button v-if="b.status === 'Booked'" class="btn btn-sm btn-danger" @click="cancel(b)">Cancel</button>
+          </td>
+        </tr>
+        <tr v-if="!bookings.length">
+          <td colspan="5" class="text-center text-muted py-4">No bookings yet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>

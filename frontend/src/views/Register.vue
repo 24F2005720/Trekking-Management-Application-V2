@@ -34,32 +34,45 @@ async function submit() {
 </script>
 
 <template>
-  <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-    <form novalidate :class="{ 'was-validated': validated }" class="card p-4 shadow-sm" style="width: 22rem" @submit.prevent="onSubmit">
-      <h1 class="h4 mb-3 text-center">Register</h1>
-      <div class="mb-2">
-        <input class="form-control" v-model="name" placeholder="Name" required />
+  <div class="auth-shell d-flex justify-content-center align-items-center vh-100">
+    <form
+      novalidate
+      :class="{ 'was-validated': validated }"
+      class="auth-card card p-4 p-md-5 shadow-lg"
+      style="width: 24rem"
+      @submit.prevent="onSubmit"
+    >
+      <div class="text-center mb-4">
+        <div class="auth-mark">⛰️</div>
+        <h1 class="h4 mt-2 mb-0">Join the trek</h1>
+        <p class="text-muted small mb-0">Create your trekker account</p>
+      </div>
+      <div class="mb-3">
+        <label class="form-label small text-muted">Name</label>
+        <input class="form-control" v-model="name" placeholder="Your name" required />
         <div class="invalid-feedback">Name is required.</div>
       </div>
-      <div class="mb-2">
-        <input class="form-control" v-model="email" type="email" placeholder="Email" required />
+      <div class="mb-3">
+        <label class="form-label small text-muted">Email</label>
+        <input class="form-control" v-model="email" type="email" placeholder="you@example.com" required />
         <div class="invalid-feedback">Enter a valid email.</div>
       </div>
-      <div class="mb-2">
+      <div class="mb-3">
+        <label class="form-label small text-muted">Password</label>
         <input
           class="form-control"
           v-model="password"
           type="password"
-          placeholder="Password"
+          placeholder="At least 6 characters"
           required
           minlength="6"
         />
         <div class="invalid-feedback">Password must be at least 6 characters.</div>
       </div>
       <button class="btn btn-primary w-100" type="submit">Register</button>
-      <p v-if="error" class="text-danger mt-2 mb-0">{{ error }}</p>
-      <p v-if="success" class="text-success mt-2 mb-0">Registered! Redirecting to login...</p>
-      <router-link class="d-block text-center mt-3" to="/login">Already have an account? Login</router-link>
+      <p v-if="error" class="text-danger mt-2 mb-0 small">{{ error }}</p>
+      <p v-if="success" class="text-success mt-2 mb-0 small">Registered! Redirecting to login...</p>
+      <router-link class="d-block text-center mt-4 small" to="/login">Already have an account? Login</router-link>
     </form>
   </div>
 </template>
