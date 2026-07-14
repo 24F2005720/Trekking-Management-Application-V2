@@ -10,7 +10,7 @@ const staffList = ref([]);
 const error = ref("");
 const validated = ref(false);
 
-const empty = () => ({ name: "", location: "", difficulty: "Easy", duration_days: 1, price: 0, slots: 1 });
+const empty = () => ({ name: "", location: "", difficulty: "", duration_days: null, price: null, slots: null });
 const form = ref(empty());
 
 const difficultyBadge = (d) => ({ Easy: "badge-easy", Moderate: "badge-moderate", Hard: "badge-hard" }[d] || "bg-secondary");
@@ -137,11 +137,15 @@ async function assign(trek, event) {
             <input class="form-control" v-model="form.location" placeholder="Location" required />
             <div class="invalid-feedback">Location is required.</div>
           </div>
-          <select class="form-select mb-2" v-model="form.difficulty">
-            <option>Easy</option>
-            <option>Moderate</option>
-            <option>Hard</option>
-          </select>
+          <div class="mb-2">
+            <select class="form-select" v-model="form.difficulty" required>
+              <option value="" disabled>Select difficulty</option>
+              <option>Easy</option>
+              <option>Moderate</option>
+              <option>Hard</option>
+            </select>
+            <div class="invalid-feedback">Difficulty is required.</div>
+          </div>
           <div class="mb-2">
             <input class="form-control" type="number" min="1" v-model.number="form.duration_days" placeholder="Duration (days)" required />
             <div class="invalid-feedback">Duration must be at least 1 day.</div>
