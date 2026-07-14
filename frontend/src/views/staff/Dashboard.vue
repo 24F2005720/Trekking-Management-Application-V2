@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { apiFetch } from "../../api";
 import { auth, clearAuth } from "../../stores/auth";
@@ -12,6 +12,12 @@ async function load() {
   treks.value = await apiFetch("/api/staff/treks");
 }
 onMounted(load);
+watch(
+  () => route.path,
+  (path) => {
+    if (path === "/staff") load();
+  }
+);
 
 function logout() {
   clearAuth();
