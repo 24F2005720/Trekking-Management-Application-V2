@@ -1,11 +1,16 @@
 # backend (Python/Flask)
 .venv/
+venv/
 __pycache__/
 *.pyc
 instance/
 *.db
 exports/
 .env
+celerybeat-schedule*
+
+# Redis
+dump.rdb
 
 # frontend (Node/Vite)
 node_modules/
@@ -14,3 +19,4 @@ dist/
 # editors/OS
 .DS_Store
 .vscode/
+

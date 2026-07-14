@@ -5,6 +5,7 @@ from decorators import role_required
 from extensions import db
 from model.trek import Trek
 from model.user import User
+from validators import is_valid_email, validate_trek_numbers
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
 
@@ -46,6 +47,8 @@ def create_trek():
     required = ["name", "location", "difficulty", "duration_days", "price", "slots"]
     if any(data.get(f) in (None, "") for f in required):
         return jsonify({"error": f"required fields: {', '.join(required)}"}), 400
+    if errors := validate_trek_numbers(data):
+        return jsonify({"error": "; ".join(errors)}), 400
 
     trek = Trek(
         name=data["name"],
@@ -66,6 +69,8 @@ def create_trek():
 def update_trek(trek_id):
     trek = Trek.query.get_or_404(trek_id)
     data = request.get_json() or {}
+    if errors := validate_trek_numbers(data):
+        return jsonify({"error": "; ".join(errors)}), 400
     for field in ["name", "location", "difficulty", "duration_days", "price", "slots", "status"]:
         if field in data:
             setattr(trek, field, data[field])
@@ -115,6 +120,10 @@ def create_staff():
     name, email, password = data.get("name"), data.get("email"), data.get("password")
     if not name or not email or not password:
         return jsonify({"error": "name, email and password are required"}), 400
+    if not is_valid_email(email):
+        return jsonify({"error": "invalid email format"}), 400
+    if len(password) < 6:
+        return jsonify({"error": "password must be at least 6 characters"}), 400
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "email already registered"}), 409
 

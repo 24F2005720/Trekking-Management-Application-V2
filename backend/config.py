@@ -21,4 +21,5 @@ class Config:
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_FROM = os.environ.get("MAIL_FROM", "noreply@trekking.local")
     ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@trekking.com")
+    GCHAT_WEBHOOK_URL = os.environ.get("GCHAT_WEBHOOK_URL")
     EXPORT_DIR = "exports"

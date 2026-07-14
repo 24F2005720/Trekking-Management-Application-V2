@@ -14,6 +14,7 @@ class Booking(db.Model):
     trek_id = db.Column(db.Integer, db.ForeignKey("treks.id"), nullable=False)
     status = db.Column(db.String(20), nullable=False, default="Booked")  # Booked/Cancelled/Completed
     booked_at = db.Column(db.DateTime, default=datetime.utcnow)
+    cancel_reason = db.Column(db.String(255), nullable=True)
 
     user = db.relationship("User")
     trek = db.relationship("Trek")

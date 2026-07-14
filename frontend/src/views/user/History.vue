@@ -9,6 +9,8 @@ const exportError = ref("");
 const exportDone = ref(false);
 
 const statusBadge = (s) => ({ Booked: "bg-success", Cancelled: "bg-danger", Completed: "bg-secondary" }[s] || "bg-secondary");
+const trekStatusBadge = (s) =>
+  ({ Open: "bg-success", Started: "bg-warning", Completed: "bg-secondary", Closed: "bg-dark" }[s] || "bg-secondary");
 
 async function load() {
   bookings.value = await apiFetch("/api/history/bookings");
@@ -74,7 +76,8 @@ async function exportCsv() {
           <th>Trek</th>
           <th>Location</th>
           <th>Booked At</th>
-          <th>Status</th>
+          <th>Booking</th>
+          <th>Trek Status</th>
           <th></th>
         </tr>
       </thead>
@@ -83,13 +86,17 @@ async function exportCsv() {
           <td class="fw-medium">{{ b.trek.name }}</td>
           <td>{{ b.trek.location }}</td>
           <td>{{ new Date(b.booked_at).toLocaleDateString() }}</td>
-          <td><span class="badge" :class="statusBadge(b.status)">{{ b.status }}</span></td>
+          <td>
+            <span class="badge" :class="statusBadge(b.status)">{{ b.status }}</span>
+            <div v-if="b.status === 'Cancelled' && b.cancel_reason" class="small text-muted">{{ b.cancel_reason }}</div>
+          </td>
+          <td><span class="badge" :class="trekStatusBadge(b.trek.status)">{{ b.trek.status }}</span></td>
           <td>
             <button v-if="b.status === 'Booked'" class="btn btn-sm btn-danger" @click="cancel(b)">Cancel</button>
           </td>
         </tr>
         <tr v-if="!bookings.length">
-          <td colspan="5" class="text-center text-muted py-4">No bookings yet.</td>
+          <td colspan="6" class="text-center text-muted py-4">No bookings yet.</td>
         </tr>
       </tbody>
     </table>

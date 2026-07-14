@@ -13,8 +13,9 @@ def booking_dict(b):
     return {
         "id": b.id,
         "status": b.status,
+        "cancel_reason": b.cancel_reason,
         "booked_at": b.booked_at.isoformat(),
-        "trek": {"id": b.trek.id, "name": b.trek.name, "location": b.trek.location},
+        "trek": {"id": b.trek.id, "name": b.trek.name, "location": b.trek.location, "status": b.trek.status},
         "user": {"id": b.user.id, "name": b.user.name, "email": b.user.email},
     }
 

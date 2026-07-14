@@ -78,6 +78,8 @@ def update_profile():
     if name := data.get("name"):
         user.name = name
     if password := data.get("password"):
+        if len(password) < 6:
+            return jsonify({"error": "password must be at least 6 characters"}), 400
         user.set_password(password)
     db.session.commit()
     return jsonify({"id": user.id, "name": user.name, "email": user.email})

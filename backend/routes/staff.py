@@ -6,6 +6,7 @@ from decorators import role_required
 from extensions import db
 from model.booking import Booking
 from model.trek import Trek
+from validators import validate_trek_numbers
 
 staff_bp = Blueprint("staff", __name__, url_prefix="/api/staff")
 
@@ -44,6 +45,8 @@ def update_trek(trek_id):
         return jsonify({"error": "Forbidden"}), 403
 
     data = request.get_json() or {}
+    if errors := validate_trek_numbers(data):
+        return jsonify({"error": "; ".join(errors)}), 400
     for field in ["slots", "status"]:
         if field in data:
             setattr(trek, field, data[field])
@@ -78,4 +81,26 @@ def participants(trek_id):
         return jsonify({"error": "Forbidden"}), 403
 
     bookings = Booking.query.filter_by(trek_id=trek_id, status="Booked").all()
-    return jsonify([{"id": b.user.id, "name": b.user.name, "email": b.user.email} for b in bookings])
+    return jsonify(
+        [{"booking_id": b.id, "id": b.user.id, "name": b.user.name, "email": b.user.email} for b in bookings]
+    )
+
+
+@staff_bp.patch("/treks/<int:trek_id>/participants/<int:booking_id>/revoke")
+@role_required("staff")
+def revoke_participant(trek_id, booking_id):
+    trek = Trek.query.get_or_404(trek_id)
+    if trek.staff_id != int(get_jwt_identity()):
+        return jsonify({"error": "Forbidden"}), 403
+
+    booking = Booking.query.filter_by(id=booking_id, trek_id=trek_id, status="Booked").first_or_404()
+    reason = (request.get_json() or {}).get("reason", "").strip()
+    if not reason:
+        return jsonify({"error": "reason is required"}), 400
+
+    booking.status = "Cancelled"
+    booking.cancel_reason = reason
+    trek.slots += 1
+    db.session.commit()
+    cache_invalidate("treks:")
+    return jsonify({"message": "booking revoked"})

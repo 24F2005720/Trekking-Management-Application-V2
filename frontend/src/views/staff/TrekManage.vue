@@ -36,6 +36,16 @@ async function cancelTrek() {
   if (!confirm(`Cancel trek "${trek.value.name}"? This cannot be undone.`)) return;
   await setStatus("Closed");
 }
+
+async function revokeParticipant(p) {
+  const reason = prompt(`Reason for revoking ${p.name}'s booking?`);
+  if (!reason || !reason.trim()) return;
+  await apiFetch(`/api/staff/treks/${trekId}/participants/${p.booking_id}/revoke`, {
+    method: "PATCH",
+    body: JSON.stringify({ reason }),
+  });
+  await load();
+}
 </script>
 
 <template>
@@ -70,7 +80,14 @@ async function cancelTrek() {
 
     <h5>Participants</h5>
     <ul class="list-group">
-      <li class="list-group-item" v-for="p in participants" :key="p.id">{{ p.name }} - {{ p.email }}</li>
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+        v-for="p in participants"
+        :key="p.id"
+      >
+        <span>{{ p.name }} - {{ p.email }}</span>
+        <button class="btn btn-sm btn-outline-danger" @click="revokeParticipant(p)">Revoke</button>
+      </li>
       <li class="list-group-item text-muted" v-if="!participants.length">No bookings yet.</li>
     </ul>
   </div>

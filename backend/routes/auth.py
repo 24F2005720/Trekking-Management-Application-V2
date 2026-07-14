@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token
 
 from extensions import db
 from model.user import User
+from validators import is_valid_email
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
@@ -13,6 +14,10 @@ def register():
     name, email, password = data.get("name"), data.get("email"), data.get("password")
     if not name or not email or not password:
         return jsonify({"error": "name, email and password are required"}), 400
+    if not is_valid_email(email):
+        return jsonify({"error": "invalid email format"}), 400
+    if len(password) < 6:
+        return jsonify({"error": "password must be at least 6 characters"}), 400
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "email already registered"}), 409
 
