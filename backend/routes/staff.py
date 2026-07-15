@@ -4,8 +4,8 @@ from flask_jwt_extended import get_jwt_identity
 from cache import cache_invalidate
 from decorators import role_required
 from extensions import db
-from model.booking import Booking
-from model.trek import Trek
+from models.booking import Booking
+from models.trek import Trek
 from validators import validate_trek_numbers
 
 staff_bp = Blueprint("staff", __name__, url_prefix="/api/staff")

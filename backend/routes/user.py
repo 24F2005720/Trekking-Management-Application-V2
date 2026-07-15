@@ -4,9 +4,9 @@ from flask_jwt_extended import get_jwt_identity
 from cache import cache_get, cache_invalidate, cache_set
 from decorators import role_required
 from extensions import db
-from model.booking import Booking
-from model.trek import Trek
-from model.user import User
+from models.booking import Booking
+from models.trek import Trek
+from models.user import User
 
 user_bp = Blueprint("user", __name__, url_prefix="/api/user")
 

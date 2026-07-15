@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt, get_jwt_identity
 from cache import cache_invalidate
 from decorators import role_required
 from extensions import db
-from model.booking import Booking
+from models.booking import Booking
 
 history_bp = Blueprint("history", __name__, url_prefix="/api/history")
 

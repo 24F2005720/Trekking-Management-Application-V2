@@ -1,18 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "./stores/auth";
-import Login from "./views/Login.vue";
-import Register from "./views/Register.vue";
-import AdminDashboard from "./views/admin/Dashboard.vue";
-import AdminTreks from "./views/admin/Treks.vue";
-import AdminStaff from "./views/admin/Staff.vue";
-import AdminUsers from "./views/admin/Users.vue";
-import AdminBookings from "./views/admin/Bookings.vue";
-import StaffDashboard from "./views/staff/Dashboard.vue";
-import StaffTrekManage from "./views/staff/TrekManage.vue";
-import UserDashboard from "./views/user/Dashboard.vue";
-import UserTrekList from "./views/user/TrekList.vue";
-import UserProfile from "./views/user/Profile.vue";
-import UserHistory from "./views/user/History.vue";
+import Login from "./components/Login.vue";
+import Register from "./components/Register.vue";
+import AdminDashboard from "./components/admin/Dashboard.vue";
+import AdminTreks from "./components/admin/Treks.vue";
+import AdminStaff from "./components/admin/Staff.vue";
+import AdminUsers from "./components/admin/Users.vue";
+import AdminBookings from "./components/admin/Bookings.vue";
+import StaffDashboard from "./components/staff/Dashboard.vue";
+import StaffTrekManage from "./components/staff/TrekManage.vue";
+import UserDashboard from "./components/user/Dashboard.vue";
+import UserTrekList from "./components/user/TrekList.vue";
+import UserProfile from "./components/user/Profile.vue";
+import UserHistory from "./components/user/History.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },

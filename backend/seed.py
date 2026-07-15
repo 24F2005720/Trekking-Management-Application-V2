@@ -1,7 +1,7 @@
 """One-time script: creates tables + the single hardcoded Admin user."""
 from app import app
 from extensions import db
-from model.user import User
+from models.user import User
 
 with app.app_context():
     db.create_all()

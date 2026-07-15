@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
 
 from extensions import db
-from model.user import User
+from models.user import User
 from validators import is_valid_email
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")

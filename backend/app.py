@@ -14,7 +14,7 @@ def create_app():
     JWTManager(app)
     CORS(app)
 
-    from model import booking, staff_profile, trek, user  # noqa: F401  registers tables
+    from models import booking, staff_profile, trek, user  # noqa: F401  registers tables
 
     from routes.auth import auth_bp
     from routes.admin import admin_bp

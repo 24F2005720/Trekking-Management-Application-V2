@@ -3,8 +3,8 @@ from flask import Blueprint, jsonify, request
 from cache import cache_invalidate
 from decorators import role_required
 from extensions import db
-from model.trek import Trek
-from model.user import User
+from models.trek import Trek
+from models.user import User
 from validators import is_valid_email, validate_trek_numbers
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
@@ -156,7 +156,7 @@ def toggle_active(user_id):
 @admin_bp.get("/stats")
 @role_required("admin")
 def stats():
-    from model.booking import Booking
+    from models.booking import Booking
 
     return jsonify(
         {

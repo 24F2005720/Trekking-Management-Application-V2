@@ -8,8 +8,8 @@ from email.message import EmailMessage
 from flask import current_app, render_template_string
 
 from celery_app import celery
-from model.booking import Booking
-from model.user import User
+from models.booking import Booking
+from models.user import User
 
 REPORT_TEMPLATE = """
 <div style="font-family: Arial, Helvetica, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -128,7 +128,7 @@ def send_daily_reminders():
 def generate_monthly_report():
     from sqlalchemy import func
 
-    from model.trek import Trek
+    from models.trek import Trek
 
     popular_treks = (
         Trek.query.join(Booking)
